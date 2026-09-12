@@ -155,6 +155,49 @@ GEMINI_API_KEY=your_gemini_api_key
 
 ---
 
+## Production Deployment Guide
+
+This project is pre-configured for seamless public deployment on **Render** (for the Node.js/Express backend) and **Vercel** / **Render** (for the React/Vite frontend).
+
+### 1. Database Setup (MongoDB Atlas)
+1. Log into [MongoDB Atlas](https://www.mongodb.com/cloud/atlas).
+2. Create a free shared cluster (M0).
+3. Under **Database Access**, create a user with read/write privileges.
+4. Under **Network Access**, add `0.0.0.0/0` to allow inbound connections from the cloud deployment platform.
+5. In **Database > Connect**, choose **Drivers** and copy your connection string (`mongodb+srv://...`).
+
+### 2. Backend Deployment (Render Web Service)
+1. Go to [Render Dashboard](https://dashboard.render.com/) and click **New + > Web Service**.
+2. Connect your GitHub repository: `https://github.com/roshan2005-ux/Placement-launchpad-ai`.
+3. Configure the service settings:
+   - **Root Directory:** `backend`
+   - **Environment:** `Node`
+   - **Build Command:** `npm install`
+   - **Start Command:** `npm start`
+4. In **Environment Variables**, add:
+   - `NODE_ENV`: `production`
+   - `PORT`: `5000`
+   - `MONGODB_URI`: `<your_mongodb_atlas_connection_string>`
+   - `JWT_SECRET`: `<your_secure_random_string>`
+   - `GEMINI_API_KEY`: `<your_gemini_api_key>`
+   - `CLIENT_URL`: `https://<your-frontend-deployment-url>.vercel.app`
+5. Deploy and copy your backend URL (e.g. `https://placement-launchpad-api.onrender.com`).
+6. Verify the health endpoint: `https://placement-launchpad-api.onrender.com/api/health`.
+
+### 3. Frontend Deployment (Vercel)
+1. Go to [Vercel Dashboard](https://vercel.com/) and click **Add New > Project**.
+2. Select the repository: `Placement-launchpad-ai`.
+3. Configure project settings:
+   - **Root Directory:** `frontend`
+   - **Framework Preset:** `Vite`
+   - **Build Command:** `npm run build`
+   - **Output Directory:** `dist`
+4. In **Environment Variables**, add:
+   - `VITE_API_BASE_URL`: `https://<your-backend-api>.onrender.com/api`
+5. Click **Deploy**. Your frontend will be live with full client-side routing support (handled by `vercel.json`).
+
+---
+
 ## Future Scope
 
 - Advanced AI career recommendations

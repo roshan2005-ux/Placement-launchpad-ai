@@ -4,6 +4,10 @@ import {
   Sparkles, 
   LayoutDashboard, 
   User as UserIcon, 
+  Briefcase,
+  CheckCircle,
+  Bot,
+  Trophy,
   LogOut, 
   LogIn, 
   UserPlus 
@@ -40,31 +44,90 @@ export const Navbar = () => {
         </Link>
 
         {/* Navigation Links */}
-        <div className="flex items-center gap-3">
+        <div className="flex items-center gap-2">
           {isAuthenticated ? (
             <>
               <Link
                 to="/dashboard"
-                className={`flex items-center gap-2 px-3.5 py-1.5 rounded-lg text-sm font-medium transition-colors ${
+                className={`flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-xs font-medium transition-colors ${
                   isActive('/dashboard')
                     ? 'bg-indigo-600/20 text-indigo-400 border border-indigo-500/30'
                     : 'text-slate-400 hover:text-slate-200 hover:bg-slate-900'
                 }`}
               >
-                <LayoutDashboard className="w-4 h-4" />
-                <span>Dashboard</span>
+                <LayoutDashboard className="w-3.5 h-3.5" />
+                <span className="hidden md:inline">Dashboard</span>
+              </Link>
+
+              <Link
+                to="/assessment"
+                className={`flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-xs font-medium transition-colors ${
+                  isActive('/assessment')
+                    ? 'bg-indigo-600/20 text-indigo-400 border border-indigo-500/30'
+                    : 'text-slate-400 hover:text-slate-200 hover:bg-slate-900'
+                }`}
+              >
+                <CheckCircle className="w-3.5 h-3.5" />
+                <span className="hidden sm:inline">Assessment</span>
+              </Link>
+
+              <Link
+                to="/interview"
+                className={`flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-xs font-medium transition-colors ${
+                  isActive('/interview')
+                    ? 'bg-indigo-600/20 text-indigo-400 border border-indigo-500/30'
+                    : 'text-slate-400 hover:text-slate-200 hover:bg-slate-900'
+                }`}
+              >
+                <Bot className="w-3.5 h-3.5" />
+                <span className="hidden sm:inline">Mock Interview</span>
+              </Link>
+
+              <Link
+                to="/readiness"
+                className={`flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-xs font-medium transition-colors ${
+                  isActive('/readiness')
+                    ? 'bg-indigo-600/20 text-indigo-400 border border-indigo-500/30'
+                    : 'text-slate-400 hover:text-slate-200 hover:bg-slate-900'
+                }`}
+              >
+                <Trophy className="w-3.5 h-3.5" />
+                <span className="hidden sm:inline">Readiness</span>
+              </Link>
+
+              <Link
+                to="/roadmap"
+                className={`flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-xs font-medium transition-colors ${
+                  isActive('/roadmap')
+                    ? 'bg-violet-600/20 text-violet-400 border border-violet-500/30'
+                    : 'text-slate-400 hover:text-slate-200 hover:bg-slate-900'
+                }`}
+              >
+                <span className="hidden lg:inline">Roadmap</span>
+              </Link>
+
+              <Link
+                to="/applications"
+                className={`flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-xs font-medium transition-colors ${
+                  isActive('/applications')
+                    ? 'bg-sky-600/20 text-sky-400 border border-sky-500/30'
+                    : 'text-slate-400 hover:text-slate-200 hover:bg-slate-900'
+                }`}
+              >
+                <Briefcase className="w-3.5 h-3.5" />
+                <span className="hidden lg:inline">Tracker</span>
               </Link>
 
               <Link
                 to="/profile"
-                className={`flex items-center gap-2 px-3.5 py-1.5 rounded-lg text-sm font-medium transition-colors ${
+                className={`flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-xs font-medium transition-colors ${
                   isActive('/profile')
                     ? 'bg-indigo-600/20 text-indigo-400 border border-indigo-500/30'
                     : 'text-slate-400 hover:text-slate-200 hover:bg-slate-900'
                 }`}
               >
-                <UserIcon className="w-4 h-4" />
-                <span>Profile</span>
+                <UserIcon className="w-3.5 h-3.5" />
+                <span className="hidden xl:inline">Profile</span>
               </Link>
 
               <div className="h-5 w-px bg-slate-800 mx-1 hidden sm:block" />

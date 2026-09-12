@@ -1,89 +1,165 @@
 # Placement Launchpad AI
 
-## Problem Statement
-**Problem Statement 27 – The Modern Placement Launchpad**
+> AI-Powered Personalized Placement Preparation Platform  
+> **🏆 FUSIONX 2026 – 3rd Prize Winner**
 
-College students often face significant uncertainty when preparing for competitive placement drives. Generic preparation material, lack of role-specific skill gap analysis, absence of actionable learning roadmaps, and lack of realistic technical/HR interview practice hinder their career readiness. 
+---
 
-## Project Objective
-**Placement Launchpad AI** is an intelligent, end-to-end placement readiness ecosystem designed to bridge the gap between academic education and industry hiring standards. By leveraging AI-powered resume analysis, dynamic skill-gap diagnostics, personalized learning roadmaps, tailored assessments, and real-time AI mock interviews, the platform empowers students with a quantifiable **Placement Readiness Score** and targeted recommendations.
+## Project Overview
+
+**Placement Launchpad AI** is an AI-powered personalized placement preparation platform that helps students understand their placement readiness and follow a structured, end-to-end preparation journey.
+
+### Problem
+Students often struggle to identify the skills required for their target job, understand their skill gaps, improve their resume, prepare for interviews, and track their placement applications because the preparation process is scattered across different platforms.
+
+### Solution
+Our platform connects the placement preparation process into one unified journey:
+
+```
+Profile → Target Role → Resume → AI Resume Analysis → Skill Gap → Personalized Learning Roadmap → Skill Assessment → AI Mock Interview → Placement Readiness Score → Personalized Recommendations → Job Application Tracking
+```
+
+---
+
+## 🏆 Hackathon Achievement
+
+- **FUSIONX 2026 – 3rd Prize Winner**
+
+---
+
+## Key Features
+
+- **Student Registration and Login**: Secure authentication with JWT, password hashing via bcryptjs, and protected client-side routes.
+- **Student Profile**: Student profile management capturing education, primary target role, graduation year, and technical skills.
+- **Target Job Role Selection**: Curated competencies across 8 key industry domains.
+- **Resume Vault / Resume Upload**: Multi-format document parser supporting PDF, DOC, and DOCX files.
+- **AI Resume Analysis**: Comprehensive resume evaluation against role competencies using Google Gemini API with fallback to local semantic heuristic engine.
+- **Skill Gap Identification**: Clear breakdown of candidate's matched skills, missing competencies, and actionable gap analysis.
+- **Personalized Learning Roadmap**: Milestone-based weekly preparation plan tailored to target job role and identified skill gaps.
+- **Skill Assessment**: Role-specific interactive technical quizzes with timed questions, automated scoring, and answer explanations.
+- **AI Mock Interview**: Interactive role-tailored technical and behavioral mock interview simulator providing detailed criteria-based feedback.
+- **Placement Readiness Score**: Weighted composite readiness score calculated from profile completeness, resume alignment, assessment performance, and mock interview score.
+- **Personalized Recommendations**: Dynamic insights highlighting priority actions, candidate strengths, and areas for improvement.
+- **Job Application Tracker**: Kanban-style status pipeline tracking applications from Applied and Screening through Interviewing, Offered, or Rejected.
+
+---
+
+## Target Roles
+
+- Full Stack Developer
+- Frontend Developer
+- Backend Developer
+- Python Developer
+- Java Developer
+- Data Analyst
+- AI/ML Engineer
+- Cybersecurity Analyst
 
 ---
 
 ## Technology Stack
 
 ### Frontend
-- **Framework:** React.js (v19)
-- **Build Tool:** Vite
-- **Styling:** Tailwind CSS (v4)
-- **Icons:** Lucide React
+- **React** (v19) - Component-based user interface
+- **Vite** - High-performance build tool and development server
+- **Tailwind CSS** (v4) - Modern utility-first styling
+- **React Router** (v7) - Client-side single-page routing
+- **Lucide React** - UI icons
 
 ### Backend
-- **Runtime:** Node.js
-- **Framework:** Express.js (REST API architecture)
-- **Security & Middleware:** CORS, Dotenv, JWT Authentication (planned)
-
-### Database & Cloud
-- **Database:** MongoDB Atlas (Cloud-hosted M0 cluster)
-- **ODM:** Mongoose (to be configured in Stage 2)
+- **Node.js** - Server runtime environment
+- **Express** - REST API framework
+- **MongoDB** & **Mongoose** - Document database and object data modeling
+- **JWT (JSON Web Tokens)** & **bcryptjs** - Authentication and password security
+- **Multer**, **pdf-parse**, & **mammoth** - Resume document uploads and text extraction (PDF / DOC / DOCX)
+- **CORS** & **dotenv** - Cross-origin middleware and environment configuration
 
 ### AI Integration
-- **Engine:** Google Gemini API (Server-side integration via official SDK)
-
-### Version Control
-- **VCS:** Git & GitHub
+- **Google Gemini API** - Server-side AI resume analysis and mock interview generation
+- **Local Heuristic Fallback Engine** - Built-in semantic competency matrix for zero-downtime offline operation
 
 ---
 
-## Core Flow & Planned Features
+## Architecture
 
-1. **Student Registration & Authentication**: Secure sign-up/login with JWT authorization.
-2. **Profile & Career Targeting**: Student profile setup with target job roles (e.g., SDE, Frontend, Data Analyst, Cloud/DevOps).
-3. **Resume Parsing & AI Analysis**: Upload resume (PDF/text) with AI extraction of skills, projects, and work experience.
-4. **Skill Gap Diagnostics**: Automated comparison between student profile/resume and target job market requirements.
-5. **Personalized Learning Roadmap**: Milestone-based, role-specific learning paths tailored to fill identified gaps.
-6. **Adaptive Assessments & Quizzes**: Role-specific technical, aptitude, and coding quizzes with instant feedback.
-7. **AI Mock Interview Simulator**: Context-aware interview practice generating targeted technical and behavioral questions.
-8. **Placement Readiness Score & Insights**: Comprehensive analytical score with actionable weaknesses, strengths, and personalized recommendations.
-
----
-
-## Development Stages
-
-- [x] **Stage 1 — Project Foundation**: Repository setup, directory architecture, React + Vite frontend, Express REST backend, Tailwind CSS v4 configuration, environment structure, and health check validation.
-- [ ] **Stage 2 — Database & Authentication**: MongoDB Atlas cloud connection, Mongoose schemas, JWT authentication, and user registration/login endpoints.
-- [ ] **Stage 3 — Profile & Job Role Selection**: Student profile management and curated industry job role taxonomies.
-- [ ] **Stage 4 — Resume Upload & Gemini AI Analysis**: Resume document processing, Gemini API prompt engineering, and skill extraction.
-- [ ] **Stage 5 — Skill Gap Engine & Dynamic Roadmap**: Gap calculation algorithm and milestone-based personalized learning plan generator.
-- [ ] **Stage 6 — Quiz & Assessment Engine**: Automated role-based quizzes, scoring logic, and answer evaluations.
-- [ ] **Stage 7 — AI Mock Interview Module**: Interactive multi-turn or scenario-based mock interview simulator with feedback.
-- [ ] **Stage 8 — Placement Readiness Scoring & Dashboard**: Aggregate readiness algorithm, visual analytics, and personalized recommendation engine.
-- [ ] **Stage 9 — Final Integration, UI Polish & Presentation Prep**: End-to-end testing, responsive design polish, and demo workflow readiness.
+```
+Student
+   ↓
+React + Vite + Tailwind Frontend
+   ↓
+REST API (JSON)
+   ↓
+Node.js + Express Backend
+   ↓
+Authentication / Profile / Resume / Assessment / Interview / Application Services
+   ↓
+MongoDB Database
+```
 
 ---
 
 ## Getting Started
 
 ### Prerequisites
-- Node.js (v18+)
-- npm (v9+)
-- Git
+- Node.js (v18 or higher)
+- npm (v9 or higher)
+- MongoDB instance (local or MongoDB Atlas)
 
-### Installation & Running Locally
+### Environment Configuration
 
-#### 1. Backend
-```bash
-cd backend
-npm install
-npm run dev
+Create a `.env` file in the `backend/` directory based on `backend/.env.example`:
+
+```env
+PORT=5000
+NODE_ENV=development
+MONGODB_URI=your_mongodb_connection_string
+JWT_SECRET=your_jwt_secret_key
+GEMINI_API_KEY=your_gemini_api_key
 ```
-Backend runs on: `http://localhost:5000`
-Health check endpoint: `http://localhost:5000/api/health`
 
-#### 2. Frontend
-```bash
-cd frontend
-npm install
-npm run dev
-```
-Frontend runs on: `http://localhost:5173`
+### Installation
+
+1. **Clone the repository:**
+   ```bash
+   git clone https://github.com/roshan2005-ux/placement-launchpad-ai.git
+   cd placement-launchpad-ai
+   ```
+
+2. **Install Backend Dependencies:**
+   ```bash
+   cd backend
+   npm install
+   ```
+
+3. **Install Frontend Dependencies:**
+   ```bash
+   cd ../frontend
+   npm install
+   ```
+
+### Running Locally
+
+1. **Start Backend Server:**
+   ```bash
+   cd backend
+   npm run dev
+   ```
+   Backend runs at `http://localhost:5000` (Health check: `http://localhost:5000/api/health`).
+
+2. **Start Frontend Development Server:**
+   ```bash
+   cd frontend
+   npm run dev
+   ```
+   Frontend runs at `http://localhost:5173`.
+
+---
+
+## Future Scope
+
+- Advanced AI career recommendations
+- Deeper skill-gap analysis
+- Job recommendations
+- Advanced interview preparation
+- Improved progress analytics
+- Placement readiness insights

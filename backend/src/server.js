@@ -5,6 +5,13 @@ import mongoose from 'mongoose';
 import { connectDB } from './config/db.js';
 import authRoutes from './routes/authRoutes.js';
 import profileRoutes from './routes/profileRoutes.js';
+import resumeRoutes from './routes/resumeRoutes.js';
+import analysisRoutes from './routes/analysisRoutes.js';
+import roadmapRoutes from './routes/roadmapRoutes.js';
+import applicationRoutes from './routes/applicationRoutes.js';
+import assessmentRoutes from './routes/assessmentRoutes.js';
+import interviewRoutes from './routes/interviewRoutes.js';
+import readinessRoutes from './routes/readinessRoutes.js';
 
 dotenv.config();
 
@@ -24,6 +31,13 @@ app.use(express.json());
 // API Routes
 app.use('/api/auth', authRoutes);
 app.use('/api/profile', profileRoutes);
+app.use('/api/resume', resumeRoutes);
+app.use('/api/analysis', analysisRoutes);
+app.use('/api/roadmap', roadmapRoutes);
+app.use('/api/applications', applicationRoutes);
+app.use('/api/assessment', assessmentRoutes);
+app.use('/api/interview', interviewRoutes);
+app.use('/api/readiness', readinessRoutes);
 
 // Health Check Endpoint
 app.get('/api/health', (req, res) => {

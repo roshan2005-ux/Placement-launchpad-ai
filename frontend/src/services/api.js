@@ -11,6 +11,15 @@ const getHeaders = () => {
   return headers;
 };
 
+const getAuthHeaders = () => {
+  const headers = {};
+  const token = localStorage.getItem('token');
+  if (token) {
+    headers['Authorization'] = `Bearer ${token}`;
+  }
+  return headers;
+};
+
 export const api = {
   // Auth endpoints
   async register(data) {
@@ -73,6 +82,304 @@ export const api = {
     const result = await res.json();
     if (!res.ok) {
       throw new Error(result.message || 'Failed to update profile');
+    }
+    return result;
+  },
+
+  // Resume endpoints
+  async uploadResume(formData) {
+    const res = await fetch(`${API_BASE_URL}/resume/upload`, {
+      method: 'POST',
+      headers: getAuthHeaders(),
+      body: formData,
+    });
+    const result = await res.json();
+    if (!res.ok) {
+      throw new Error(result.message || 'Failed to upload resume');
+    }
+    return result;
+  },
+
+  async getResume() {
+    const res = await fetch(`${API_BASE_URL}/resume`, {
+      method: 'GET',
+      headers: getHeaders(),
+    });
+    const result = await res.json();
+    if (!res.ok) {
+      throw new Error(result.message || 'Failed to fetch resume');
+    }
+    return result;
+  },
+
+  async deleteResume() {
+    const res = await fetch(`${API_BASE_URL}/resume`, {
+      method: 'DELETE',
+      headers: getHeaders(),
+    });
+    const result = await res.json();
+    if (!res.ok) {
+      throw new Error(result.message || 'Failed to delete resume');
+    }
+    return result;
+  },
+
+  // Resume Analysis endpoints
+  async analyzeResume(force = false) {
+    const res = await fetch(`${API_BASE_URL}/analysis/resume`, {
+      method: 'POST',
+      headers: getHeaders(),
+      body: JSON.stringify({ force }),
+    });
+    const result = await res.json();
+    if (!res.ok) {
+      throw new Error(result.message || 'Failed to analyze resume');
+    }
+    return result;
+  },
+
+  async getLatestAnalysis() {
+    const res = await fetch(`${API_BASE_URL}/analysis/resume`, {
+      method: 'GET',
+      headers: getHeaders(),
+    });
+    const result = await res.json();
+    if (!res.ok) {
+      throw new Error(result.message || 'Failed to fetch resume analysis');
+    }
+    return result;
+  },
+
+  // Learning Roadmap endpoints
+  async generateRoadmap(force = false) {
+    const res = await fetch(`${API_BASE_URL}/roadmap/generate`, {
+      method: 'POST',
+      headers: getHeaders(),
+      body: JSON.stringify({ force }),
+    });
+    const result = await res.json();
+    if (!res.ok) {
+      throw new Error(result.message || 'Failed to generate learning roadmap');
+    }
+    return result;
+  },
+
+  async getLatestRoadmap() {
+    const res = await fetch(`${API_BASE_URL}/roadmap`, {
+      method: 'GET',
+      headers: getHeaders(),
+    });
+    const result = await res.json();
+    if (!res.ok) {
+      throw new Error(result.message || 'Failed to fetch learning roadmap');
+    }
+    return result;
+  },
+
+  async toggleRoadmapWeek(weekNumber) {
+    const res = await fetch(`${API_BASE_URL}/roadmap/week/${weekNumber}/toggle`, {
+      method: 'PUT',
+      headers: getHeaders(),
+    });
+    const result = await res.json();
+    if (!res.ok) {
+      throw new Error(result.message || 'Failed to update week milestone');
+    }
+    return result;
+  },
+
+  // Job Application Tracker endpoints
+  async getApplications(params = {}) {
+    const query = new URLSearchParams();
+    if (params.status) query.append('status', params.status);
+    if (params.search) query.append('search', params.search);
+    const queryString = query.toString() ? `?${query.toString()}` : '';
+
+    const res = await fetch(`${API_BASE_URL}/applications${queryString}`, {
+      method: 'GET',
+      headers: getHeaders(),
+    });
+    const result = await res.json();
+    if (!res.ok) {
+      throw new Error(result.message || 'Failed to fetch job applications');
+    }
+    return result;
+  },
+
+  async getApplicationStats() {
+    const res = await fetch(`${API_BASE_URL}/applications/stats`, {
+      method: 'GET',
+      headers: getHeaders(),
+    });
+    const result = await res.json();
+    if (!res.ok) {
+      throw new Error(result.message || 'Failed to fetch application statistics');
+    }
+    return result;
+  },
+
+  async createApplication(data) {
+    const res = await fetch(`${API_BASE_URL}/applications`, {
+      method: 'POST',
+      headers: getHeaders(),
+      body: JSON.stringify(data),
+    });
+    const result = await res.json();
+    if (!res.ok) {
+      throw new Error(result.message || 'Failed to create job application');
+    }
+    return result;
+  },
+
+  async updateApplication(id, data) {
+    const res = await fetch(`${API_BASE_URL}/applications/${id}`, {
+      method: 'PUT',
+      headers: getHeaders(),
+      body: JSON.stringify(data),
+    });
+    const result = await res.json();
+    if (!res.ok) {
+      throw new Error(result.message || 'Failed to update job application');
+    }
+    return result;
+  },
+
+  async updateApplicationStatus(id, status) {
+    const res = await fetch(`${API_BASE_URL}/applications/${id}/status`, {
+      method: 'PATCH',
+      headers: getHeaders(),
+      body: JSON.stringify({ status }),
+    });
+    const result = await res.json();
+    if (!res.ok) {
+      throw new Error(result.message || 'Failed to update application status');
+    }
+    return result;
+  },
+
+  async deleteApplication(id) {
+    const res = await fetch(`${API_BASE_URL}/applications/${id}`, {
+      method: 'DELETE',
+      headers: getHeaders(),
+    });
+    const result = await res.json();
+    if (!res.ok) {
+      throw new Error(result.message || 'Failed to delete job application');
+    }
+    return result;
+  },
+
+  // Skill Assessment endpoints
+  async getAssessmentQuestions(role) {
+    const query = role ? `?role=${encodeURIComponent(role)}` : '';
+    const res = await fetch(`${API_BASE_URL}/assessment/questions${query}`, {
+      method: 'GET',
+      headers: getHeaders(),
+    });
+    const result = await res.json();
+    if (!res.ok) {
+      throw new Error(result.message || 'Failed to fetch assessment questions');
+    }
+    return result;
+  },
+
+  async submitAssessment(data) {
+    const res = await fetch(`${API_BASE_URL}/assessment/submit`, {
+      method: 'POST',
+      headers: getHeaders(),
+      body: JSON.stringify(data),
+    });
+    const result = await res.json();
+    if (!res.ok) {
+      throw new Error(result.message || 'Failed to submit assessment');
+    }
+    return result;
+  },
+
+  async getLatestAssessment() {
+    const res = await fetch(`${API_BASE_URL}/assessment/latest`, {
+      method: 'GET',
+      headers: getHeaders(),
+    });
+    const result = await res.json();
+    if (!res.ok) {
+      throw new Error(result.message || 'Failed to fetch latest assessment');
+    }
+    return result;
+  },
+
+  // AI Mock Interview endpoints
+  async startMockInterview(role) {
+    const res = await fetch(`${API_BASE_URL}/interview/start`, {
+      method: 'POST',
+      headers: getHeaders(),
+      body: JSON.stringify(role ? { role } : {}),
+    });
+    const result = await res.json();
+    if (!res.ok) {
+      throw new Error(result.message || 'Failed to start AI mock interview');
+    }
+    return result;
+  },
+
+  async submitInterviewAnswer(interviewId, data) {
+    const res = await fetch(`${API_BASE_URL}/interview/${interviewId}/answer`, {
+      method: 'POST',
+      headers: getHeaders(),
+      body: JSON.stringify(data),
+    });
+    const result = await res.json();
+    if (!res.ok) {
+      throw new Error(result.message || 'Failed to evaluate interview answer');
+    }
+    return result;
+  },
+
+  async getLatestInterview() {
+    const res = await fetch(`${API_BASE_URL}/interview/latest`, {
+      method: 'GET',
+      headers: getHeaders(),
+    });
+    const result = await res.json();
+    if (!res.ok) {
+      throw new Error(result.message || 'Failed to fetch latest interview');
+    }
+    return result;
+  },
+
+  async getInterviewById(interviewId) {
+    const res = await fetch(`${API_BASE_URL}/interview/${interviewId}`, {
+      method: 'GET',
+      headers: getHeaders(),
+    });
+    const result = await res.json();
+    if (!res.ok) {
+      throw new Error(result.message || 'Failed to fetch interview details');
+    }
+    return result;
+  },
+
+  // Placement Readiness & Recommendations endpoints
+  async getPlacementReadiness() {
+    const res = await fetch(`${API_BASE_URL}/readiness`, {
+      method: 'GET',
+      headers: getHeaders(),
+    });
+    const result = await res.json();
+    if (!res.ok) {
+      throw new Error(result.message || 'Failed to fetch placement readiness data');
+    }
+    return result;
+  },
+
+  async getPlacementRecommendations() {
+    const res = await fetch(`${API_BASE_URL}/readiness/recommendations`, {
+      method: 'GET',
+      headers: getHeaders(),
+    });
+    const result = await res.json();
+    if (!res.ok) {
+      throw new Error(result.message || 'Failed to fetch placement recommendations');
     }
     return result;
   },

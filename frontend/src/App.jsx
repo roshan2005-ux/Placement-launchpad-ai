@@ -6,6 +6,11 @@ import { Login } from './pages/Login';
 import { Register } from './pages/Register';
 import { Profile } from './pages/Profile';
 import { Dashboard } from './pages/Dashboard';
+import { Roadmap } from './pages/Roadmap';
+import { JobApplications } from './pages/JobApplications';
+import Assessment from './pages/Assessment';
+import MockInterview from './pages/MockInterview';
+import Readiness from './pages/Readiness';
 
 function HomeRedirect() {
   const { isAuthenticated, loading } = useAuth();
@@ -45,6 +50,46 @@ export function App() {
                 element={
                   <ProtectedRoute>
                     <Dashboard />
+                  </ProtectedRoute>
+                }
+              />
+              <Route
+                path="/roadmap"
+                element={
+                  <ProtectedRoute>
+                    <Roadmap />
+                  </ProtectedRoute>
+                }
+              />
+              <Route
+                path="/applications"
+                element={
+                  <ProtectedRoute>
+                    <JobApplications />
+                  </ProtectedRoute>
+                }
+              />
+              <Route
+                path="/assessment"
+                element={
+                  <ProtectedRoute>
+                    <Assessment />
+                  </ProtectedRoute>
+                }
+              />
+              <Route
+                path="/interview"
+                element={
+                  <ProtectedRoute>
+                    <MockInterview />
+                  </ProtectedRoute>
+                }
+              />
+              <Route
+                path="/readiness"
+                element={
+                  <ProtectedRoute>
+                    <Readiness />
                   </ProtectedRoute>
                 }
               />

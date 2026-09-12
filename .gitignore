@@ -3,10 +3,20 @@ node_modules/
 .pnp
 .pnp.js
 
-# Environment variables
+# Environment variables & Secrets
 .env
-.env.local
-.env.*.local
+.env.*
+*.env
+!.env.example
+
+# File uploads (server storage)
+uploads/
+backend/uploads/
+backend/uploads/resumes/*
+!backend/uploads/resumes/.gitkeep
+*.pdf
+*.doc
+*.docx
 
 # Build outputs
 dist/

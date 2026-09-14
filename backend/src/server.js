@@ -43,6 +43,7 @@ app.use(cors({
     if (
       allowedOrigins.includes('*') ||
       allowedOrigins.includes(normalizedOrigin) ||
+      normalizedOrigin.endsWith('.vercel.app') ||
       process.env.NODE_ENV !== 'production'
     ) {
       return callback(null, true);
@@ -50,6 +51,8 @@ app.use(cors({
     return callback(new Error(`CORS policy blocked access from origin: ${origin}`));
   },
   credentials: true,
+  methods: ['GET', 'POST', 'PUT', 'PATCH', 'DELETE', 'OPTIONS'],
+  allowedHeaders: ['Content-Type', 'Authorization'],
 }));
 app.use(express.json());
 
@@ -92,6 +95,6 @@ app.use((err, req, res, next) => {
   });
 });
 
-app.listen(PORT, () => {
+app.listen(PORT, '0.0.0.0', () => {
   console.log(`Placement Launchpad Server running on port ${PORT}`);
 });

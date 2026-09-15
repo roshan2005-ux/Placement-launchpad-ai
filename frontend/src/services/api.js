@@ -15,7 +15,12 @@ const resolveApiBaseUrl = () => {
   // Strip trailing slashes
   url = url.replace(/\/+$/, '');
 
-  // Automatically append /api if the user provided only the root domain
+  // Collapse any accidental duplicate "/api/api" sequences to a single "/api"
+  while (url.endsWith('/api/api')) {
+    url = url.slice(0, -4);
+  }
+
+  // Ensure url ends with exactly one "/api"
   if (!url.endsWith('/api')) {
     url = `${url}/api`;
   }

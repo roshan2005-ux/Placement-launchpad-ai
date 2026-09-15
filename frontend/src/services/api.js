@@ -1,4 +1,53 @@
-const API_BASE_URL = import.meta.env.VITE_API_BASE_URL || 'http://localhost:5000/api';
+const resolveApiBaseUrl = () => {
+  let url = (import.meta.env.VITE_API_BASE_URL || '').trim();
+
+  if (!url) {
+    if (import.meta.env.PROD) {
+      console.warn(
+        '[Placement Launchpad API] Warning: VITE_API_BASE_URL was not set during this Vercel build. ' +
+        'Defaulting to http://localhost:5000/api. ' +
+        'Please set VITE_API_BASE_URL in Vercel Project Settings and trigger a Redeploy.'
+      );
+    }
+    return 'http://localhost:5000/api';
+  }
+
+  // Strip trailing slashes
+  url = url.replace(/\/+$/, '');
+
+  // Automatically append /api if the user provided only the root domain
+  if (!url.endsWith('/api')) {
+    url = `${url}/api`;
+  }
+
+  return url;
+};
+
+const API_BASE_URL = resolveApiBaseUrl();
+
+if (typeof window !== 'undefined') {
+  console.log('[Placement Launchpad] Target Backend API:', API_BASE_URL);
+}
+
+const safeFetch = async (url, options = {}) => {
+  try {
+    const res = await fetch(url, options);
+    return res;
+  } catch (err) {
+    if (err && (err.name === 'TypeError' || String(err.message).includes('fetch') || String(err.message).includes('NetworkError'))) {
+      const isLocal = API_BASE_URL.includes('localhost') || API_BASE_URL.includes('127.0.0.1');
+      if (isLocal) {
+        throw new Error(
+          `Connection Failed: The frontend was built targeting "${API_BASE_URL}". In Vercel, please set VITE_API_BASE_URL to your Render backend URL (e.g. https://your-backend.onrender.com/api) and trigger a Redeploy.`
+        );
+      }
+      throw new Error(
+        `Unable to reach backend at ${API_BASE_URL}. If Render is waking up from sleep, please wait 30-60 seconds and try again.`
+      );
+    }
+    throw err;
+  }
+};
 
 const getHeaders = () => {
   const headers = {
@@ -23,7 +72,7 @@ const getAuthHeaders = () => {
 export const api = {
   // Auth endpoints
   async register(data) {
-    const res = await fetch(`${API_BASE_URL}/auth/register`, {
+    const res = await safeFetch(`${API_BASE_URL}/auth/register`, {
       method: 'POST',
       headers: getHeaders(),
       body: JSON.stringify(data),
@@ -36,7 +85,7 @@ export const api = {
   },
 
   async login(data) {
-    const res = await fetch(`${API_BASE_URL}/auth/login`, {
+    const res = await safeFetch(`${API_BASE_URL}/auth/login`, {
       method: 'POST',
       headers: getHeaders(),
       body: JSON.stringify(data),
@@ -49,7 +98,7 @@ export const api = {
   },
 
   async getMe() {
-    const res = await fetch(`${API_BASE_URL}/auth/me`, {
+    const res = await safeFetch(`${API_BASE_URL}/auth/me`, {
       method: 'GET',
       headers: getHeaders(),
     });
@@ -62,7 +111,7 @@ export const api = {
 
   // Profile endpoints
   async getProfile() {
-    const res = await fetch(`${API_BASE_URL}/profile`, {
+    const res = await safeFetch(`${API_BASE_URL}/profile`, {
       method: 'GET',
       headers: getHeaders(),
     });
@@ -74,7 +123,7 @@ export const api = {
   },
 
   async updateProfile(data) {
-    const res = await fetch(`${API_BASE_URL}/profile`, {
+    const res = await safeFetch(`${API_BASE_URL}/profile`, {
       method: 'PUT',
       headers: getHeaders(),
       body: JSON.stringify(data),
@@ -88,7 +137,7 @@ export const api = {
 
   // Resume endpoints
   async uploadResume(formData) {
-    const res = await fetch(`${API_BASE_URL}/resume/upload`, {
+    const res = await safeFetch(`${API_BASE_URL}/resume/upload`, {
       method: 'POST',
       headers: getAuthHeaders(),
       body: formData,
@@ -101,7 +150,7 @@ export const api = {
   },
 
   async getResume() {
-    const res = await fetch(`${API_BASE_URL}/resume`, {
+    const res = await safeFetch(`${API_BASE_URL}/resume`, {
       method: 'GET',
       headers: getHeaders(),
     });
@@ -113,7 +162,7 @@ export const api = {
   },
 
   async deleteResume() {
-    const res = await fetch(`${API_BASE_URL}/resume`, {
+    const res = await safeFetch(`${API_BASE_URL}/resume`, {
       method: 'DELETE',
       headers: getHeaders(),
     });
@@ -126,7 +175,7 @@ export const api = {
 
   // Resume Analysis endpoints
   async analyzeResume(force = false) {
-    const res = await fetch(`${API_BASE_URL}/analysis/resume`, {
+    const res = await safeFetch(`${API_BASE_URL}/analysis/resume`, {
       method: 'POST',
       headers: getHeaders(),
       body: JSON.stringify({ force }),
@@ -139,7 +188,7 @@ export const api = {
   },
 
   async getLatestAnalysis() {
-    const res = await fetch(`${API_BASE_URL}/analysis/resume`, {
+    const res = await safeFetch(`${API_BASE_URL}/analysis/resume`, {
       method: 'GET',
       headers: getHeaders(),
     });
@@ -152,7 +201,7 @@ export const api = {
 
   // Learning Roadmap endpoints
   async generateRoadmap(force = false) {
-    const res = await fetch(`${API_BASE_URL}/roadmap/generate`, {
+    const res = await safeFetch(`${API_BASE_URL}/roadmap/generate`, {
       method: 'POST',
       headers: getHeaders(),
       body: JSON.stringify({ force }),
@@ -165,7 +214,7 @@ export const api = {
   },
 
   async getLatestRoadmap() {
-    const res = await fetch(`${API_BASE_URL}/roadmap`, {
+    const res = await safeFetch(`${API_BASE_URL}/roadmap`, {
       method: 'GET',
       headers: getHeaders(),
     });
@@ -177,7 +226,7 @@ export const api = {
   },
 
   async toggleRoadmapWeek(weekNumber) {
-    const res = await fetch(`${API_BASE_URL}/roadmap/week/${weekNumber}/toggle`, {
+    const res = await safeFetch(`${API_BASE_URL}/roadmap/week/${weekNumber}/toggle`, {
       method: 'PUT',
       headers: getHeaders(),
     });
@@ -195,7 +244,7 @@ export const api = {
     if (params.search) query.append('search', params.search);
     const queryString = query.toString() ? `?${query.toString()}` : '';
 
-    const res = await fetch(`${API_BASE_URL}/applications${queryString}`, {
+    const res = await safeFetch(`${API_BASE_URL}/applications${queryString}`, {
       method: 'GET',
       headers: getHeaders(),
     });
@@ -207,7 +256,7 @@ export const api = {
   },
 
   async getApplicationStats() {
-    const res = await fetch(`${API_BASE_URL}/applications/stats`, {
+    const res = await safeFetch(`${API_BASE_URL}/applications/stats`, {
       method: 'GET',
       headers: getHeaders(),
     });
@@ -219,7 +268,7 @@ export const api = {
   },
 
   async createApplication(data) {
-    const res = await fetch(`${API_BASE_URL}/applications`, {
+    const res = await safeFetch(`${API_BASE_URL}/applications`, {
       method: 'POST',
       headers: getHeaders(),
       body: JSON.stringify(data),
@@ -232,7 +281,7 @@ export const api = {
   },
 
   async updateApplication(id, data) {
-    const res = await fetch(`${API_BASE_URL}/applications/${id}`, {
+    const res = await safeFetch(`${API_BASE_URL}/applications/${id}`, {
       method: 'PUT',
       headers: getHeaders(),
       body: JSON.stringify(data),
@@ -245,7 +294,7 @@ export const api = {
   },
 
   async updateApplicationStatus(id, status) {
-    const res = await fetch(`${API_BASE_URL}/applications/${id}/status`, {
+    const res = await safeFetch(`${API_BASE_URL}/applications/${id}/status`, {
       method: 'PATCH',
       headers: getHeaders(),
       body: JSON.stringify({ status }),
@@ -258,7 +307,7 @@ export const api = {
   },
 
   async deleteApplication(id) {
-    const res = await fetch(`${API_BASE_URL}/applications/${id}`, {
+    const res = await safeFetch(`${API_BASE_URL}/applications/${id}`, {
       method: 'DELETE',
       headers: getHeaders(),
     });
@@ -272,7 +321,7 @@ export const api = {
   // Skill Assessment endpoints
   async getAssessmentQuestions(role) {
     const query = role ? `?role=${encodeURIComponent(role)}` : '';
-    const res = await fetch(`${API_BASE_URL}/assessment/questions${query}`, {
+    const res = await safeFetch(`${API_BASE_URL}/assessment/questions${query}`, {
       method: 'GET',
       headers: getHeaders(),
     });
@@ -284,7 +333,7 @@ export const api = {
   },
 
   async submitAssessment(data) {
-    const res = await fetch(`${API_BASE_URL}/assessment/submit`, {
+    const res = await safeFetch(`${API_BASE_URL}/assessment/submit`, {
       method: 'POST',
       headers: getHeaders(),
       body: JSON.stringify(data),
@@ -297,7 +346,7 @@ export const api = {
   },
 
   async getLatestAssessment() {
-    const res = await fetch(`${API_BASE_URL}/assessment/latest`, {
+    const res = await safeFetch(`${API_BASE_URL}/assessment/latest`, {
       method: 'GET',
       headers: getHeaders(),
     });
@@ -310,7 +359,7 @@ export const api = {
 
   // AI Mock Interview endpoints
   async startMockInterview(role) {
-    const res = await fetch(`${API_BASE_URL}/interview/start`, {
+    const res = await safeFetch(`${API_BASE_URL}/interview/start`, {
       method: 'POST',
       headers: getHeaders(),
       body: JSON.stringify(role ? { role } : {}),
@@ -323,7 +372,7 @@ export const api = {
   },
 
   async submitInterviewAnswer(interviewId, data) {
-    const res = await fetch(`${API_BASE_URL}/interview/${interviewId}/answer`, {
+    const res = await safeFetch(`${API_BASE_URL}/interview/${interviewId}/answer`, {
       method: 'POST',
       headers: getHeaders(),
       body: JSON.stringify(data),
@@ -336,7 +385,7 @@ export const api = {
   },
 
   async getLatestInterview() {
-    const res = await fetch(`${API_BASE_URL}/interview/latest`, {
+    const res = await safeFetch(`${API_BASE_URL}/interview/latest`, {
       method: 'GET',
       headers: getHeaders(),
     });
@@ -348,7 +397,7 @@ export const api = {
   },
 
   async getInterviewById(interviewId) {
-    const res = await fetch(`${API_BASE_URL}/interview/${interviewId}`, {
+    const res = await safeFetch(`${API_BASE_URL}/interview/${interviewId}`, {
       method: 'GET',
       headers: getHeaders(),
     });
@@ -361,7 +410,7 @@ export const api = {
 
   // Placement Readiness & Recommendations endpoints
   async getPlacementReadiness() {
-    const res = await fetch(`${API_BASE_URL}/readiness`, {
+    const res = await safeFetch(`${API_BASE_URL}/readiness`, {
       method: 'GET',
       headers: getHeaders(),
     });
@@ -373,7 +422,7 @@ export const api = {
   },
 
   async getPlacementRecommendations() {
-    const res = await fetch(`${API_BASE_URL}/readiness/recommendations`, {
+    const res = await safeFetch(`${API_BASE_URL}/readiness/recommendations`, {
       method: 'GET',
       headers: getHeaders(),
     });
@@ -386,7 +435,7 @@ export const api = {
 
   // Health check
   async checkHealth() {
-    const res = await fetch(`${API_BASE_URL}/health`);
+    const res = await safeFetch(`${API_BASE_URL}/health`);
     return await res.json();
   },
 };

@@ -30,31 +30,68 @@ const defaultOrigins = [
 
 const configuredOrigins = (process.env.CLIENT_URL || process.env.FRONTEND_URL || '')
   .split(',')
-  .map((url) => url.trim().replace(/\/$/, ''))
+  .map((url) => url.trim().replace(/\/+$/, ''))
   .filter(Boolean);
 
 const allowedOrigins = [...new Set([...defaultOrigins, ...configuredOrigins])];
 
-app.use(cors({
+const corsOptions = {
   origin: (origin, callback) => {
     // Allow non-browser requests (e.g. mobile apps, curl, uptime/health checks)
     if (!origin) return callback(null, true);
-    const normalizedOrigin = origin.replace(/\/$/, '');
-    if (
-      allowedOrigins.includes('*') ||
-      allowedOrigins.includes(normalizedOrigin) ||
-      normalizedOrigin.endsWith('.vercel.app') ||
-      process.env.NODE_ENV !== 'production'
-    ) {
+
+    const normalized = origin.trim().replace(/\/+$/, '');
+    const lower = normalized.toLowerCase();
+
+    // Check wildcard or explicitly configured origins
+    if (allowedOrigins.includes('*') || allowedOrigins.some((o) => o.toLowerCase() === lower)) {
       return callback(null, true);
     }
-    return callback(new Error(`CORS policy blocked access from origin: ${origin}`));
+
+    // Allow all Vercel deployment domains (production, preview branches, etc.)
+    if (lower.endsWith('.vercel.app') || lower.includes('.vercel.app')) {
+      return callback(null, true);
+    }
+
+    // Allow local development
+    if (lower.includes('localhost') || lower.includes('127.0.0.1')) {
+      return callback(null, true);
+    }
+
+    // Allow in non-production environments
+    if (process.env.NODE_ENV !== 'production') {
+      return callback(null, true);
+    }
+
+    console.warn(`[CORS] Blocked request from unauthorized origin: ${origin}`);
+    return callback(null, false);
   },
   credentials: true,
   methods: ['GET', 'POST', 'PUT', 'PATCH', 'DELETE', 'OPTIONS'],
-  allowedHeaders: ['Content-Type', 'Authorization'],
-}));
+  allowedHeaders: ['Content-Type', 'Authorization', 'X-Requested-With', 'Accept', 'Origin'],
+  optionsSuccessStatus: 200,
+};
+
+app.use(cors(corsOptions));
+app.options('*', cors(corsOptions));
 app.use(express.json());
+
+// Root status endpoints for browser verification
+app.get('/', (req, res) => {
+  res.status(200).json({
+    status: 'ok',
+    service: 'Placement Launchpad AI Backend API',
+    health: '/api/health',
+  });
+});
+
+app.get('/api', (req, res) => {
+  res.status(200).json({
+    status: 'ok',
+    service: 'Placement Launchpad AI Backend API',
+    health: '/api/health',
+  });
+});
 
 // API Routes
 app.use('/api/auth', authRoutes);
